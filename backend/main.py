@@ -1,9 +1,10 @@
 from fastapi import FastAPI
+from database import users_collection
 
-# create app instance
 app = FastAPI()
 
-# test route
 @app.get("/")
 def root():
-    return {"message": "Backend is running 🚀"}
+    # simple test: count documents in users collection
+    count = users_collection.count_documents({})
+    return {"message": "MongoDB connected successfully ✅", "users_count": count}
