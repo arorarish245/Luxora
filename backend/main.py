@@ -1,10 +1,21 @@
 from fastapi import FastAPI
-from database import users_collection
+from fastapi.middleware.cors import CORSMiddleware
+from auth import router as auth_router
 
 app = FastAPI()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"], 
+    allow_credentials=True,
+    allow_methods=["*"],  # allow GET, POST, PUT, DELETE, OPTIONS
+    allow_headers=["*"],  # allow Content-Type, Authorization, etc.
+)
+
+# Include your routes
+app.include_router(auth_router, prefix="/auth")
+
 @app.get("/")
 def root():
-    # simple test: count documents in users collection
-    count = users_collection.count_documents({})
-    return {"message": "MongoDB connected successfully ✅", "users_count": count}
+    return {"message": "Backend is running 🚀"}
