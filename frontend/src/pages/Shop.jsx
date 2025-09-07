@@ -19,14 +19,14 @@ export default function Shop() {
         <h1 className="text-4xl font-bold text-[#14213D]">Shop All Products</h1>
       </div>
 
-      <div className="flex flex-col md:flex-row px-6 md:px-16 gap-6">
+      <div className="flex flex-col md:flex-row px-6 md:px-16 gap-6 mb-15">
         <Filters filters={filters} setFilters={setFilters} />
         <div className="flex-1">
           <ProductsGrid filters={filters} />
         </div>
       </div>
 
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }
