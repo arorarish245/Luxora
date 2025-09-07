@@ -1,20 +1,36 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import ProductCard from "./ProductCard";
-
-// Dummy data for now
-const products = [
-  { id: 1, name: "Smartphone", price: 499, image: "src/assets/images/electronics.jpg" },
-  { id: 2, name: "T-Shirt", price: 29, image: "src/assets/images/clothes.webp" },
-  { id: 3, name: "Sofa", price: 399, image: "src/assets/images/home.webp" },
-  { id: 4, name: "Lipstick", price: 19, image: "src/assets/images/beauty.webp" },
-];
+import SearchBar from "./SearchBar";
 
 export default function ProductsGrid() {
+  const [products, setProducts] = useState([]);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/products/", {
+        params: search ? { search } : {},
+      })
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error("Error fetching products:", err));
+  }, [search]);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
+    <div>
+      <SearchBar onSearch={setSearch} />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.length > 0 ? (
+          products.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))
+        ) : (
+          <p className="col-span-4 text-center text-gray-500">
+            No products found
+          </p>
+        )}
+      </div>
     </div>
   );
 }

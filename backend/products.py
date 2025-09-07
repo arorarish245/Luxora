@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 from bson import ObjectId
 from typing import List, Optional
@@ -33,10 +33,13 @@ def add_product(product: Product):
     result = products_collection.insert_one(product.dict())
     return {"message": "Product added successfully", "id": str(result.inserted_id)}
 
-# Get all products
+# Get all products with optional search
 @router.get("/", response_model=List[dict])
-def get_products():
-    products = products_collection.find()
+def get_products(search: str = Query(None, description="Search products by name")):
+    query = {}
+    if search:
+        query = {"name": {"$regex": search, "$options": "i"}}  # case-insensitive match
+    products = products_collection.find(query)
     return [product_helper(p) for p in products]
 
 # Get product by id
@@ -65,3 +68,5 @@ def delete_product(product_id: str):
     if result.deleted_count:
         return {"message": "Product deleted successfully"}
     raise HTTPException(status_code=404, detail="Product not found")
+
+
