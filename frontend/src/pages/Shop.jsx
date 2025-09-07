@@ -1,10 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Filters from "../components/Filters";
 import ProductsGrid from "../components/ProductsGrid";
 
 export default function Shop() {
+  const [filters, setFilters] = useState({
+    categories: [],
+    minPrice: null,
+    maxPrice: null,
+  });
+
   return (
     <div className="bg-[#E5E5E5] min-h-screen">
       <Navbar />
@@ -14,9 +20,9 @@ export default function Shop() {
       </div>
 
       <div className="flex flex-col md:flex-row px-6 md:px-16 gap-6">
-        <Filters />
+        <Filters filters={filters} setFilters={setFilters} />
         <div className="flex-1">
-          <ProductsGrid />
+          <ProductsGrid filters={filters} />
         </div>
       </div>
 

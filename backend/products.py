@@ -33,14 +33,35 @@ def add_product(product: Product):
     result = products_collection.insert_one(product.dict())
     return {"message": "Product added successfully", "id": str(result.inserted_id)}
 
-# Get all products with optional search
+# Get all products with optional search, category, and price filter
 @router.get("/", response_model=List[dict])
-def get_products(search: str = Query(None, description="Search products by name")):
+def get_products(
+    search: str = Query(None, description="Search products by name"),
+    category: str = Query(None, description="Filter by category"),
+    min_price: float = Query(None, description="Minimum price"),
+    max_price: float = Query(None, description="Maximum price"),
+):
     query = {}
+
+    # Search filter
     if search:
-        query = {"name": {"$regex": search, "$options": "i"}}  # case-insensitive match
+        query["name"] = {"$regex": search, "$options": "i"}  # case-insensitive
+
+    # Category filter
+    if category:
+        query["category"] = {"$regex": f"^{category}$", "$options": "i"}
+
+    # Price filter
+    if min_price is not None or max_price is not None:
+        query["price"] = {}
+        if min_price is not None:
+            query["price"]["$gte"] = min_price
+        if max_price is not None:
+            query["price"]["$lte"] = max_price
+
     products = products_collection.find(query)
     return [product_helper(p) for p in products]
+
 
 # Get product by id
 @router.get("/{product_id}", response_model=dict)

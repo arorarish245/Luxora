@@ -3,18 +3,25 @@ import axios from "axios";
 import ProductCard from "./ProductCard";
 import SearchBar from "./SearchBar";
 
-export default function ProductsGrid() {
+export default function ProductsGrid({ filters }) {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
+    const params = {};
+
+    if (search) params.search = search;
+    if (filters.categories.length === 1) {
+      params.category = filters.categories[0]; 
+    }
+    if (filters.minPrice) params.min_price = filters.minPrice;
+    if (filters.maxPrice) params.max_price = filters.maxPrice;
+
     axios
-      .get("http://localhost:8000/products/", {
-        params: search ? { search } : {},
-      })
+      .get("http://localhost:8000/products/", { params })
       .then((res) => setProducts(res.data))
       .catch((err) => console.error("Error fetching products:", err));
-  }, [search]);
+  }, [search, filters]);
 
   return (
     <div>
@@ -23,7 +30,7 @@ export default function ProductsGrid() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.length > 0 ? (
           products.map((product) => (
-            <ProductCard key={product._id} product={product} />
+            <ProductCard key={product.id} product={product} />
           ))
         ) : (
           <p className="col-span-4 text-center text-gray-500">
