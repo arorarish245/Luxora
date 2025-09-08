@@ -6,7 +6,6 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Check if user is logged in (example: token exists in localStorage)
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);

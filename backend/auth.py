@@ -33,10 +33,18 @@ def signup(user: UserSignup):
     return {"message": "User created successfully"}
 
 # Login API
+# Login API
 @router.post("/login")
 def login(user: UserLogin):
     db_user = users_collection.find_one({"email": user.email})
     if not db_user or not bcrypt.verify(user.password, db_user["password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
+
     token = jwt.encode({"user_id": str(db_user["_id"])}, JWT_SECRET, algorithm=JWT_ALGORITHM)
-    return {"token": token, "name": db_user["name"], "email": db_user["email"]}
+
+    return {
+        "token": token,
+        "userId": str(db_user["_id"]),  # <-- add this
+        "name": db_user["name"],
+        "email": db_user["email"]
+    }
