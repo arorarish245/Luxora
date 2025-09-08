@@ -1,5 +1,5 @@
-// Categories.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   { id: 1, name: "Electronics", image: "src/assets/images/electronics.webp" },
@@ -9,6 +9,13 @@ const categories = [
 ];
 
 export default function Categories() {
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (categoryName) => {
+    // Navigate to Shop page with the category in query params
+    navigate(`/shop?category=${encodeURIComponent(categoryName)}`);
+  };
+
   return (
     <div className="bg-[#E5E5E5] py-16 px-4 md:px-16">
       <h2 className="text-3xl font-bold text-[#14213D] text-center mb-12">
@@ -19,6 +26,7 @@ export default function Categories() {
           <div
             key={category.id}
             className="relative rounded-xl overflow-hidden cursor-pointer hover:scale-105 transform transition"
+            onClick={() => handleCategoryClick(category.name)}
           >
             <img
               src={category.image}

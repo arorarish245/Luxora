@@ -4,10 +4,12 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import CartPage from "./pages/CartPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />

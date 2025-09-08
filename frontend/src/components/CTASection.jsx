@@ -1,7 +1,13 @@
-// CTASection.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CTASection() {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/shop"); 
+  };
+
   return (
     <div className="bg-[#14213D] text-white py-16 px-4 md:px-16 text-center">
       <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -11,7 +17,10 @@ export default function CTASection() {
         Join Luxora today and enjoy special discounts, handpicked collections,
         and early access to our upcoming sales.
       </p>
-      <button className="bg-[#FCA311] text-[#14213D] px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-[#ffb733] transition">
+      <button
+        className="bg-[#FCA311] text-[#14213D] px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-[#ffb733] transition"
+        onClick={handleClick} 
+      >
         Start Shopping
       </button>
     </div>

@@ -1,15 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Filters from "../components/Filters";
 import ProductsGrid from "../components/ProductsGrid";
 
 export default function Shop() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const categoryFromUrl = params.get("category");
+
   const [filters, setFilters] = useState({
-    categories: [],
+    categories: categoryFromUrl ? [categoryFromUrl] : [],
     minPrice: null,
     maxPrice: null,
   });
+
+  // Update filters if URL changes
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      categories: categoryFromUrl ? [categoryFromUrl] : [],
+    }));
+  }, [categoryFromUrl]);
 
   return (
     <div className="bg-[#E5E5E5] min-h-screen">
