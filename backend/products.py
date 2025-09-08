@@ -62,6 +62,27 @@ def get_products(
     products = products_collection.find(query)
     return [product_helper(p) for p in products]
 
+# Featured Product
+@router.get("/featured")
+def get_featured_products():
+    pipeline = [
+        {"$group": {
+            "_id": "$category",
+            "product": {"$first": "$$ROOT"} 
+        }},
+        {"$replaceRoot": {"newRoot": "$product"}}
+    ]
+    products = list(products_collection.aggregate(pipeline))
+    return [
+        {
+            "id": str(p["_id"]),
+            "name": p["name"],
+            "price": p["price"],
+            "image": p.get("image", ""),
+            "category": p.get("category", "")
+        }
+        for p in products
+    ]
 
 # Get product by id
 @router.get("/{product_id}", response_model=dict)
@@ -89,5 +110,4 @@ def delete_product(product_id: str):
     if result.deleted_count:
         return {"message": "Product deleted successfully"}
     raise HTTPException(status_code=404, detail="Product not found")
-
 
