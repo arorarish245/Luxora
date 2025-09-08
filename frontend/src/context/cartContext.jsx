@@ -1,6 +1,6 @@
-// cartContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
@@ -27,7 +27,15 @@ export const CartProvider = ({ children }) => {
     }, [userId]);
 
     const addToCart = (product) => {
-        if (!userId) return alert("Please login to add items to cart");
+        if (!userId) {
+            Swal.fire({
+                icon: "warning",
+                title: "Login Required",
+                text: "Please login to add items to your cart.",
+                confirmButtonColor: "#FCA311",
+            });
+            return;
+        }
 
         const productId = product.id || product._id;
 
@@ -48,20 +56,42 @@ export const CartProvider = ({ children }) => {
                     }
                     return [...prev, { ...product, id: productId, quantity: 1 }];
                 });
+
+                // ✅ SweetAlert2 success notification
+                Swal.fire({
+                    icon: "success",
+                    title: "Added to Cart 🛒",
+                    text: `${product.name || "Product"} has been added to your cart.`,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    background: "#14213D",
+                    color: "#fff",
+                });
             })
             .catch((err) =>
                 console.error("Error adding to cart:", err.response?.data || err.message)
             );
     };
 
-
-
     const removeFromCart = (productId) => {
         if (!userId) return;
 
         axios
             .delete(`http://localhost:8000/cart/remove/${userId}/${productId}`)
-            .then(() => setCart((prev) => prev.filter((p) => p.id !== productId)))
+            .then(() => {
+                setCart((prev) => prev.filter((p) => p.id !== productId));
+
+                // ✅ SweetAlert2 info notification
+                Swal.fire({
+                    icon: "info",
+                    title: "Removed from Cart",
+                    text: "Item has been removed from your cart.",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    background: "#14213D",
+                    color: "#fff",
+                });
+            })
             .catch((err) => console.error(err));
     };
 
